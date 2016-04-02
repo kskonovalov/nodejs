@@ -1,0 +1,27 @@
+{
+  "name": "helloapp",
+  "version": "1.0.0",
+  "description": "hello world",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Konstantin",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "ansi": "^0.3.1",
+    "axel": "0.0.3",
+    "colors": "^1.1.2",
+    "express": "^4.13.4",
+    "play-sound": "0.0.7"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/picprofit/nodejs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/picprofit/nodejs/issues"
+  },
+  "homepage": "https://github.com/picprofit/nodejs#readme"
+}
