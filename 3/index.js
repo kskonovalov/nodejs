@@ -4,7 +4,6 @@
 'use strict';
 
 var request = require("request");
-var urlutils = require("url");
 var cheerio = require("cheerio"); //jQuery
 
 request("http://fognews.ru/", (error, response, body) => {
