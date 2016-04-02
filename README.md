@@ -9,3 +9,4 @@ node log1.js --log log.txt<br />
 
 #nodejs-3<br />
 node index.js
+<a href="http://localhost:5000/?text=Чё как">http://localhost:5000/?text=Чё как</a>
