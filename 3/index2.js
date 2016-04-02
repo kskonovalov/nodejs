@@ -5,8 +5,6 @@
 
 var request = require("request");
 var urlutils = require("url");
-var cheerio = require("cheerio"); //jQuery
-const argv = require('minimist')(process.argv.slice(2)); //for options
 const express = require("express");
 const app = express();
 
