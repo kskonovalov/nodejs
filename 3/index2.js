@@ -6,10 +6,13 @@
 var request = require("request");
 var urlutils = require("url");
 const express = require("express");
+//const bodyParser = require("body-parser");
 const app = express();
 
 
 var textToTranslate;
+
+//app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
     if(req.query.text !== undefined) {
@@ -32,6 +35,7 @@ app.get('/', (req, res) => {
     request(url, (error, response, body) => {
         if(!error) {
             if(response.statusCode == 200) {
+                console.log(body.text);
                 var result = JSON.parse(body);
                 res.send(`${textToTranslate} => ${result.text}`);
             }

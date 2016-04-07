@@ -9,6 +9,7 @@
   "author": "Konstantin",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.15.0",
     "cheerio": "^0.20.0",
     "express": "^4.13.4",
     "minimist": "^1.2.0",
