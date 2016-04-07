@@ -6,14 +6,16 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Konstantin Konovalov",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.15.0",
     "cheerio": "^0.20.0",
     "consolidate": "^0.14.0",
+    "cookie-parser": "^1.4.1",
     "express": "^4.13.4",
     "iconv": "^2.1.11",
     "request": "^2.70.0"
-  }
+  },
+  "devDependencies": {}
 }

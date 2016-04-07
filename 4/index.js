@@ -7,6 +7,7 @@ const express = require("express");
 const app = express();
 const templating = require('consolidate');
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 app.use(bodyParser.urlencoded());
 const request = require("request");
 const cheerio = require("cheerio"); //jQuery
@@ -16,11 +17,18 @@ const iconv = require("iconv");
 app.engine('hbs', templating.handlebars);
 app.set('view engine', 'hbs');
 app.set('views', __dirname + '/views');
+app.use(cookieParser('nLL9xVBg6d'));
 
 
 app.get("/", (req, res) => {
+
+    var quotesToShow = 3;
+    if (req.cookies.quotesToShow) {
+        quotesToShow = req.cookies.quotesToShow;
+    }
     res.render('main', {
         title: 'Что-то странное',
+        count: quotesToShow,
         partials: {
             header: "header"
         }
@@ -28,6 +36,12 @@ app.get("/", (req, res) => {
 });
 
 app.post('/', (req, res) =>{
+
+    var quotesToShow = req.body.count;
+
+    //cookies saving
+    var timeToSaveCookie = 60 * 1000; //1 min
+    res.cookie('quotesToShow', quotesToShow, { maxAge: timeToSaveCookie });
 
     var quotes = [];
     request({
@@ -43,7 +57,7 @@ app.post('/', (req, res) =>{
                 var $ = cheerio.load(body);
                 $(".quote").each(function(i){
                     quotes.push($(this).find(".text").eq(0).text());
-                    return i<req.body.count-1; //show N last news
+                    return i<quotesToShow-1; //show N last news
                 });
 
                 res.render('main', {
