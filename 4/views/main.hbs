@@ -1,0 +1,18 @@
+{{> header }}
+<div style="width: 500px">
+{{#if quotes}}
+<ul>
+    {{#each quotes}}
+    <li style="border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    background: #f3f3f3;
+    border: 1px dotted #bbbbbb;
+    font-family: 'Monaco', 'Liberation Mono', 'Droid Sans Mono', 'Ubuntu Mono', 'Lucida Console', 'Helvetica Neue', monospace;
+    padding: 7px 8px 5px 8px;
+    font-size: 10pt;
+    line-height: 1.3em;">{{this}}</li>
+    {{/each}}
+</ul>
+{{/if}}
+</div>
