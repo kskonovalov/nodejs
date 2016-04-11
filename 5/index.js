@@ -46,7 +46,7 @@ app.get("/create", (req, res) => {
 });
 
 app.post('/create', (req, res) =>{
-    crud.create(req.body.title, req.body.content, (err, id) => {
+    crud.save(0, req.body.title, req.body.content, (err, id) => {
         if(id) {
                 res.redirect("/view/" + id);
             }
@@ -59,11 +59,11 @@ app.post('/create', (req, res) =>{
 
 //creating articles
 app.get("/view/:id", (req, res) => {
-    crud.view(req.body.id, (err, article) => {
+    crud.view(req.params.id, (err, article) => {
         if(!err) {
             res.render('article', {
-                title: article.title,
-                article: article,
+                title: article[0].title,
+                article: article[0],
                 partials: {
                     header: "header"
                 }
@@ -77,6 +77,52 @@ app.get("/view/:id", (req, res) => {
                 }
             });
         }
+    });
+});
+
+//creating articles
+app.get("/edit/:id", (req, res) => {
+    crud.edit(req.params.id, (err, article) => {
+        if(!err) {
+            res.render('create', {
+                title: article[0].title,
+                article: article[0],
+                partials: {
+                    header: "header"
+                }
+            });
+        }
+        else {
+            res.render('index', {
+                title: "nothing found",
+                partials: {
+                    header: "header"
+                }
+            });
+        }
+    });
+});
+app.post('/edit/:id', (req, res) =>{
+    crud.save(req.body.id, req.body.title, req.body.content, (err, id) => {
+        if(id) {
+            res.redirect("/view/" + id);
+        }
+        else {
+            res.redirect("/create");
+        }
+    });
+});
+
+//deleting articles
+app.get("/delete/:id", (req, res) => {
+    crud.delete(req.params.id, (err) => {
+        if(!err) {
+
+        }
+        else {
+
+        }
+        res.redirect("/");
     });
 });
 
