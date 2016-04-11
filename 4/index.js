@@ -27,7 +27,7 @@ app.get("/", (req, res) => {
         quotesToShow = req.cookies.quotesToShow;
     }
     res.render('main', {
-        title: 'Что-то странное',
+        title: 'Список статей',
         count: quotesToShow,
         partials: {
             header: "header"

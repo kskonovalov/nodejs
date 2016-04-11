@@ -32,12 +32,13 @@ app.get('/', (req, res) => {
     };
     url = urlutils.format(params);
 
-    request(url, (error, response, body) => {
+    request({
+        uri: url,
+        json: true
+    }, (error, response, body) => {
         if(!error) {
             if(response.statusCode == 200) {
-                console.log(body.text);
-                var result = JSON.parse(body);
-                res.send(`${textToTranslate} => ${result.text}`);
+                res.send(`${textToTranslate} => ${body.text}`);
             }
             else
                 res.send("Ошибка! Код ответа сервера " + response.statusCode);
