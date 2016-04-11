@@ -18,15 +18,23 @@ module.exports = function(dbConfig, tableName) {
             });
         },
 
-        create: (title, content, callback) => {
+        save: (id, title, content, callback) => {
             pool.getConnection((err, connection) => {
                 mysqlUtilities.upgrade(connection);
                 mysqlUtilities.introspection(connection);
-                connection.insert(tableName, {title: title, content: content}, (err, recordId) => {
-                    recordId = (recordId !== undefined) ? recordId : false;
-                    callback(err, recordId);
-                    connection.release();
-                });
+                if(id == 0) {
+                    connection.insert(tableName, {title: title, content: content}, (err, recordId) => {
+                        recordId = (recordId !== undefined) ? recordId : false;
+                        callback(err, recordId);
+                        connection.release();
+                    });
+                }
+                else {
+                    connection.update(tableName, {title: title, content: content}, {id:id}, (err, affectedRows) => {
+                        callback(err, id);
+                        connection.release();
+                    });
+                }
             });
         },
 
@@ -39,8 +47,24 @@ module.exports = function(dbConfig, tableName) {
             });
         },
 
+        edit: (id, callback) => {
+            pool.getConnection((err, connection) => {
+                mysqlUtilities.upgrade(connection);
+                mysqlUtilities.introspection(connection);
+                connection.select(tableName, '*', {id: id}, (err, result) => {
+                    callback(err, result);
+                    connection.release();
+                });
+            });
+        },
+        
         delete: (id, callback) => {
-
+            pool.getConnection((err, connection) => {
+                connection.query("DELETE FROM " +  mysql.escapeId(tableName) + " WHERE id = ?", id , (err) => {
+                    callback(err);
+                    connection.release();
+                });
+            });
         }
     };
     
