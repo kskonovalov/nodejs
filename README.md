@@ -15,7 +15,7 @@ node index2.js AND THEN <a href="http://localhost:5000/?text=Чё как">http:/
 node index.js<br />
 displays last N quotes from bash.im/abyssbest
 
-#nodejs-5<br />
+#nodejs-5 && 6<br />
 node index.js<br />
 config: rename config/config-example.js to config/config.js
 import config/articles.sql
