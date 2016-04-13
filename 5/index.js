@@ -17,10 +17,85 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded());
 const request = require("request");
 
+//cookies work
+const cookieParser = require("cookie-parser");
+app.use(cookieParser("SucMdMP5TN")); //secret string for cookies
+
+//sessions
+const session = require("cookie-session");
+app.use(session({keys: ['secret']}));
+
 //view
 app.engine('hbs', templating.handlebars);
 app.set('view engine', 'hbs');
 app.set('views', __dirname + '/views');
+
+
+//auth
+const passport = require("passport");
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+const localStrategy = require("passport-local").Strategy;
+passport.use(new localStrategy((username, password, done) => {
+    if(username != "admin")
+        return done(null, false);
+    if(password != "admin")
+        return done(null, false);
+    app.locals.username = username;
+    app.locals.isAdmin = true;
+    return done(null, {username: "admin"});
+}));
+
+passport.serializeUser((user, done) => {
+    done(null, user.username);
+});
+passport.deserializeUser((id, done) => {
+    done(null, {username:id});
+});
+
+const auth = passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/user"
+});
+
+
+
+
+
+
+//user
+app.get("/user", (req, res) => {
+    res.render('login', {
+        title: "Авторизация",
+        partials: {
+            header: "header"
+        }
+    });
+});
+app.post("/user", auth);
+
+const mustBeAuthentificated = (req, res, next) => {
+    if(req.isAuthenticated()) {
+        next();
+    }
+    else {
+        res.redirect("/user");
+    }
+};
+
+app.get("/logout", (req, res, next) => {
+    req.logout();
+    app.locals.username = null;
+    app.locals.isAdmin = null;
+    res.redirect("/");
+});
+
+app.all("/create", mustBeAuthentificated);
+app.all("/edit/*", mustBeAuthentificated);
+app.all("/delete", mustBeAuthentificated);
+
 
 //show all articles
 app.get("/", (req, res) => {
@@ -35,7 +110,7 @@ app.get("/", (req, res) => {
     });
 });
 
-//creating articles
+//creating article
 app.get("/create", (req, res) => {
     res.render('create', {
         title: 'Создание статьи',
@@ -44,7 +119,6 @@ app.get("/create", (req, res) => {
         }
     });
 });
-
 app.post('/create', (req, res) =>{
     crud.save(0, req.body.title, req.body.content, (err, id) => {
         if(id) {
@@ -57,7 +131,7 @@ app.post('/create', (req, res) =>{
 });
 
 
-//creating articles
+//view article
 app.get("/view/:id", (req, res) => {
     crud.view(req.params.id, (err, article) => {
         if(!err) {
@@ -80,7 +154,7 @@ app.get("/view/:id", (req, res) => {
     });
 });
 
-//creating articles
+//edit article
 app.get("/edit/:id", (req, res) => {
     crud.edit(req.params.id, (err, article) => {
         if(!err) {
@@ -113,7 +187,7 @@ app.post('/edit/:id', (req, res) =>{
     });
 });
 
-//deleting articles
+//deleting article
 app.get("/delete/:id", (req, res) => {
     crud.delete(req.params.id, (err) => {
         if(!err) {
@@ -125,7 +199,6 @@ app.get("/delete/:id", (req, res) => {
         res.redirect("/");
     });
 });
-
 
 
 app.listen(5000);
