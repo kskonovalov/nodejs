@@ -23,7 +23,7 @@ app.use(cookieParser("SucMdMP5TN")); //secret string for cookies
 
 //sessions
 const session = require("cookie-session");
-app.use(session({keys: ['secret']}));
+app.use(session({keys: ['6lP2z2QOtG']}));
 
 //view
 app.engine('hbs', templating.handlebars);
@@ -35,7 +35,10 @@ app.set('views', __dirname + '/views');
 const passport = require("passport");
 app.use(passport.initialize());
 app.use(passport.session());
-
+//hash
+const hashCode = function(s){
+    return s.split("").reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a},0);
+};
 
 const localStrategy = require("passport-local").Strategy;
 passport.use(new localStrategy((username, password, done) => {
@@ -44,9 +47,9 @@ passport.use(new localStrategy((username, password, done) => {
     if(password != "admin")
         return done(null, false);
     app.locals.username = username;
-    app.locals.isAdmin = true;
     return done(null, {username: "admin"});
 }));
+
 
 passport.serializeUser((user, done) => {
     done(null, user.username);
@@ -56,13 +59,8 @@ passport.deserializeUser((id, done) => {
 });
 
 const auth = passport.authenticate("local", {
-    successRedirect: "/",
     failureRedirect: "/user"
 });
-
-
-
-
 
 
 //user
@@ -74,7 +72,9 @@ app.get("/user", (req, res) => {
         }
     });
 });
-app.post("/user", auth);
+app.post("/user", auth, (req, res) => {
+    res.redirect("/");
+});
 
 const mustBeAuthentificated = (req, res, next) => {
     if(req.isAuthenticated()) {
@@ -89,8 +89,47 @@ app.get("/logout", (req, res, next) => {
     req.logout();
     app.locals.username = null;
     app.locals.isAdmin = null;
+    res.clearCookie("auth");
     res.redirect("/");
 });
+
+
+
+
+
+const VKontakteStrategy = require("passport-vkontakte").Strategy;
+passport.use(new VKontakteStrategy({
+        clientID:     5412989, // VK.com docs call it 'API ID'
+        clientSecret: "U03CfCA12o6Pbrbu7uJu",
+        callbackURL:  "http://localhost:5000/auth/vkontakte/callback"
+    },
+    function(accessToken, refreshToken, profile, done) {
+        app.locals.username = profile.displayName;
+        app.locals.isAdmin = false;
+        return done(null, {username: profile.displayName});
+    }
+));
+
+app.get('/auth/vkontakte',
+    passport.authenticate('vkontakte'),
+    function(req, res){
+        // The request will be redirected to vk.com for authentication, so
+        // this function will not be called.
+    });
+
+app.get('/auth/vkontakte/callback',
+    passport.authenticate('vkontakte', { failureRedirect: '/login' }),
+    function(req, res) {
+        // Successful authentication, redirect home.
+        res.redirect('/');
+    });
+
+
+
+
+
+
+
 
 app.all("/create", mustBeAuthentificated);
 app.all("/edit/*", mustBeAuthentificated);
