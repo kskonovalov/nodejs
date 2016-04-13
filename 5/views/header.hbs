@@ -1,5 +1,12 @@
 <h1>{{title}}</h1>
+<h3>{{#if username}}
+    Logged as: {{username}} <a href="/logout">[logout]</a>
+    {{else}}
+    <a href="/user">Login, please</a> or<br />
+    <a href="/auth/vkontakte">Login with VK</a>
+    {{/if}}
+</h3>
 <ul>
     <li><a href="/">All articles</a></li>
-    <li><a href="/create">New article</a></li>
+    {{#if username}}<li><a href="/create">New article</a></li>{{/if}}
 </ul>
